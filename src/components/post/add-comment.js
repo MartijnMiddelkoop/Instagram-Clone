@@ -5,9 +5,7 @@ import UserContext from '../../context/user';
 
 export default function AddComment({ docId, comments, setComments, commentInput }) {
   const [comment, setComment] = useState('');
-  
   const { firebase, FieldValue } = useContext(FirebaseContext);
-  
   const {
     user: { displayName }
   } = useContext(UserContext);
@@ -16,7 +14,6 @@ export default function AddComment({ docId, comments, setComments, commentInput 
     event.preventDefault();
 
     setComments([...comments, { displayName, comment }]);
-    
     setComment('');
 
     return firebase
@@ -36,7 +33,6 @@ export default function AddComment({ docId, comments, setComments, commentInput 
         onSubmit={(event) =>
           comment.length >= 1 ? handleSubmitComment(event) : event.preventDefault()
         }
-
       >
         <input
           aria-label="Add a comment"
@@ -49,7 +45,6 @@ export default function AddComment({ docId, comments, setComments, commentInput 
           onChange={({ target }) => setComment(target.value)}
           ref={commentInput}
         />
-
         <button
           className={`text-sm font-bold text-blue-medium ${!comment && 'opacity-25'}`}
           type="button"

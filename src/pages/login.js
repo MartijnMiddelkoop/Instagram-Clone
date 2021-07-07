@@ -52,7 +52,6 @@ export default function Login() {
               onChange={({ target }) => setEmailAddress(target.value)}
               value={emailAddress}
             />
-
             <input
               aria-label="Enter your password"
               type="password"
@@ -61,14 +60,12 @@ export default function Login() {
               onChange={({ target }) => setPassword(target.value)}
               value={password}
             />
-
             <button
               disabled={isInvalid}
               type="submit"
               className={`bg-blue-medium text-white w-full rounded h-8 font-bold
             ${isInvalid && 'opacity-50'}`}
             >
-                
               Login
             </button>
           </form>

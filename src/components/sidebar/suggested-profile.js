@@ -9,16 +9,12 @@ import {
 import LoggedInUserContext from '../../context/logged-in-user';
 
 export default function SuggestedProfile({
-
   profileDocId,
   username,
   profileId,
   userId,
   loggedInUserDocId
-
-}) 
-
-{
+}) {
   const [followed, setFollowed] = useState(false);
   const { setActiveUser } = useContext(LoggedInUserContext);
 

@@ -16,37 +16,42 @@ export default function SignUp() {
   const [error, setError] = useState('');
   const isInvalid = password === '' || emailAddress === '';
 
-  const handleSignup = async (event) => {
+  const handleSignUp = async (event) => {
     event.preventDefault();
 
-
     const usernameExists = await doesUsernameExist(username);
-    if (!usernameExists.length) {
+    if (!usernameExists) {
       try {
         const createdUserResult = await firebase
-        .auth()
-        .createdUserWithEmailAndPassword(emailAddress, password);
+          .auth()
+          .createUserWithEmailAndPassword(emailAddress, password);
 
+        // authentication
+        // -> emailAddress & password & username (displayName)
         await createdUserResult.user.updateProfile({
-          displayname: username
+          displayName: username
         });
 
-        await firebase.firestore().collection('users').add({
-          userId: createdUserResult.user.uid, 
-          username: username.toLowercase(),
-          fullName,
-          emailAddress: emailAddress.toLowerCase(),
-          following: [],
-          followers: [],
-          dataCreated: Date,now()
-        });
+        // firebase user collection (create a document)
+        await firebase
+          .firestore()
+          .collection('users')
+          .add({
+            userId: createdUserResult.user.uid,
+            username: username.toLowerCase(),
+            fullName,
+            emailAddress: emailAddress.toLowerCase(),
+            following: ['2'],
+            followers: [],
+            dateCreated: Date.now()
+          });
 
         history.push(ROUTES.DASHBOARD);
       } catch (error) {
         setFullName('');
         setEmailAddress('');
         setPassword('');
-        setError(error,message);
+        setError(error.message);
       }
     } else {
       setUsername('');
@@ -71,16 +76,15 @@ export default function SignUp() {
 
           {error && <p className="mb-4 text-xs text-red-primary">{error}</p>}
 
-          <form onSubmit={handleSignup} method="POST">
+          <form onSubmit={handleSignUp} method="POST">
             <input
-              aria-label="Enter your email username"
+              aria-label="Enter your username"
               type="text"
               placeholder="Username"
               className="text-sm text-gray-base w-full mr-3 py-5 px-4 h-2 border border-gray-primary rounded mb-2"
               onChange={({ target }) => setUsername(target.value)}
               value={username}
             />
-            
             <input
               aria-label="Enter your full name"
               type="text"
@@ -89,7 +93,6 @@ export default function SignUp() {
               onChange={({ target }) => setFullName(target.value)}
               value={fullName}
             />
-
             <input
               aria-label="Enter your email address"
               type="text"
@@ -98,7 +101,6 @@ export default function SignUp() {
               onChange={({ target }) => setEmailAddress(target.value)}
               value={emailAddress}
             />
-
             <input
               aria-label="Enter your password"
               type="password"
@@ -107,14 +109,12 @@ export default function SignUp() {
               onChange={({ target }) => setPassword(target.value)}
               value={password}
             />
-
             <button
               disabled={isInvalid}
               type="submit"
               className={`bg-blue-medium text-white w-full rounded h-8 font-bold
             ${isInvalid && 'opacity-50'}`}
             >
-                
               Sign Up
             </button>
           </form>

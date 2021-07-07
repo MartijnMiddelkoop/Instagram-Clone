@@ -2,55 +2,50 @@ import { useReducer, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Header from './header';
 import Photos from './photos';
-import { getUserPhotosByUsername } from '../../services/firebase'; 
+import { getUserPhotosByUserId } from '../../services/firebase';
 
-
-export default function Profile({user}) {
-const reducer = (state, newState) => ({ ...state, ...newState });
-const initialState = {
+export default function Profile({ user }) {
+  const reducer = (state, newState) => ({ ...state, ...newState });
+  const initialState = {
     profile: {},
-    photosCollection: [],
+    photosCollection: null,
     followerCount: 0
-};
+  };
 
-    const [{ profile, photosCollection, followerCount }, dispatch] = 
-    useReducer(
-        reducer, 
-        initialState
-    );
+  const [{ profile, photosCollection, followerCount }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
-    useEffect(() =>  {
-        async function getProfileInfoAndPhotos() {
-            const photos = await getUserPhotosByUsername(user.username);
-            dispatch({ profile: user, photosCollection: photos, followerCount: user.followers.lenght });
-        }
-        getProfileInfoAndPhotos();
-    }, [user.username]);
+  useEffect(() => {
+    async function getProfileInfoAndPhotos() {
+      const photos = await getUserPhotosByUserId(user.userId);
+      dispatch({ profile: user, photosCollection: photos, followerCount: user.followers.length });
+    }
+    getProfileInfoAndPhotos();
+  }, [user.username]);
 
-    return ( 
+  return (
     <>
-    
-        <Header 
-            photosCount= {photosCollection ? photosCollection.lenght : 0}
-            profile={profile}
-            followerCount={followerCount}
-            setFollowerCount={dispacth}
-        /> 
-        <Photos photos={photosCollection} />
-        <p> Hello {user.username}</p>
+      <Header
+        photosCount={photosCollection ? photosCollection.length : 0}
+        profile={profile}
+        followerCount={followerCount}
+        setFollowerCount={dispatch}
+      />
+      <Photos photos={photosCollection} />
     </>
-    );
+  );
 }
 
-profile.PropTypes = {
-    user: PropTypes.shape({
-        dateCreated: PropTypes.number.isRequired,
-        emailAddress: PropTypes.string.isRequired,
-        followers: PropTypes.array.isRequired,
-        following: PropTypes.array.isRequired,
-        fullname: PropTypes.string.isRequired,
-        userId: PropTypes.string.isRequired,
-        username: PropTypes.string.isRequired,
-    }).isRequired
-    
+Profile.propTypes = {
+  user: PropTypes.shape({
+    dateCreated: PropTypes.number,
+    emailAddress: PropTypes.string,
+    followers: PropTypes.array,
+    following: PropTypes.array,
+    fullName: PropTypes.string,
+    userId: PropTypes.string,
+    username: PropTypes.string
+  })
 };
